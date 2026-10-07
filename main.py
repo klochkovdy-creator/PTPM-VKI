@@ -33,13 +33,15 @@ def calculate_triangle(str_a, str_b, str_c):
         logging.exception("Детали ошибки конвертации:")
         return "", [(-2, -2), (-2, -2), (-2, -2)]
 
-    if a <= 0 or b <= 0 or c <= 0 or not (a + b > c and a + c > b and b + c > a):
+    epsilon = 1e-9
+
+    if a <= 0 or b <= 0 or c <= 0 or not (a + b > c + epsilon and a + c > b + epsilon and b + c > a + epsilon):
         logging.warning(f"Некорректные размеры сторон для треугольника: A={a}, B={b}, C={c}")
         return "не треугольник", [(-1, -1), (-1, -1), (-1, -1)]
 
-    if a == b == c:
+    if abs(a - b) < epsilon and abs(b - c) < epsilon:
         t_type = "равносторонний"
-    elif a == b or b == c or a == c:
+    elif abs(a - b) < epsilon or abs(b - c) < epsilon or abs(a - c) < epsilon:
         t_type = "равнобедренный"
     else:
         t_type = "разносторонний"
