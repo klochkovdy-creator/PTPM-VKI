@@ -78,6 +78,26 @@ def calculate_triangle(str_a, str_b, str_c):
     return t_type, coords
 
 if __name__ == "__main__":
-    print("Результат работы программы:")
-    print(calculate_triangle("5", "5", "5"))
-    print(calculate_triangle("abc", "4", "5"))
+
+    while True:
+        user_input = input("\nВведите стороны a, b, c через пробел (или 'q' для выхода): ").strip()
+        
+        if user_input.lower() == 'q':
+            print("Выход из программы. Логи сохранены в logs/file_txt.log.")
+            logging.info("Приложение остановлено пользователем.")
+            break
+            
+        parts = user_input.split()
+        if len(parts) != 3:
+            print("Ошибка: нужно ввести ровно три значения")
+            continue
+            
+        t_type, coords = calculate_triangle(parts[0], parts[1], parts[2])
+        
+        if t_type == "":
+            print("Ошибка: введены нечисловые значения")
+        elif t_type == "не треугольник":
+            print("Треугольник с такими сторонами не существует.")
+        else:
+            print(f"Тип треугольника: {t_type}")
+            print(f"Координаты вершин: {coords}")
