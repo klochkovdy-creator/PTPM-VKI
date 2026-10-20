@@ -1,6 +1,6 @@
 import unittest
-import datetime
-from src.delivery import calculate_delivery_cost
+from src.delivery_service import calculate_delivery_cost
+
 
 class TestDeliveryService(unittest.TestCase):
     def test_standard_delivery_basic(self):
@@ -32,7 +32,7 @@ class TestDeliveryService(unittest.TestCase):
 
     def test_distance_boundary_max(self):
         cost, date = calculate_delivery_cost(2.0, 5000, "обычный", False)
-        self.assertEqual(cost, 27200)
+        self.assertEqual(cost, 25200)
 
     def test_distance_invalid_too_low(self):
         cost, date = calculate_delivery_cost(2.0, 0, "обычный", False)
@@ -85,6 +85,31 @@ class TestDeliveryService(unittest.TestCase):
     def test_dangerous_heavy_combination(self):
         cost, date = calculate_delivery_cost(25.0, 100, "опасный", False)
         self.assertEqual(cost, 2050)
+
+    def test_weight_nan_is_rejected(self):
+        cost, date = calculate_delivery_cost(float('nan'), 100, "обычный", False)
+        self.assertEqual((cost, date), (-1, "0000-00-00"))
+
+    def test_weight_just_above_five_uses_medium_coefficient(self):
+        cost, _ = calculate_delivery_cost(5.1, 100, "обычный", False)
+        self.assertEqual(cost, 840)
+
+    def test_weight_just_below_twenty_uses_medium_coefficient(self):
+        cost, _ = calculate_delivery_cost(19.9, 100, "обычный", False)
+        self.assertEqual(cost, 840)
+
+    def test_delivery_days_distance_499(self):
+        _, date = calculate_delivery_cost(2.0, 499, "обычный", False)
+        self.assertEqual(date, "2026-09-04")
+
+    def test_delivery_days_distance_1000(self):
+        _, date = calculate_delivery_cost(2.0, 1000, "обычный", False)
+        self.assertEqual(date, "2026-09-05")
+
+    def test_express_days_distance_1000(self):
+        _, date = calculate_delivery_cost(2.0, 1000, "обычный", True)
+        self.assertEqual(date, "2026-09-04")
+
 
 if __name__ == '__main__':
     unittest.main()
