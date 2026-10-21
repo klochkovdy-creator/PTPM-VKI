@@ -25,7 +25,7 @@ def calculate_delivery_cost(weight: float, distance: int, package_type: str, is_
     if is_express:
         total_cost *= 1.4
 
-    current_date = datetime.date(2026, 9, 3)
+    current_date = datetime.date.today()
     days_needed = max(1, distance // 500)
 
     if is_express:
