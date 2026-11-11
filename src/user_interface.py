@@ -1,3 +1,8 @@
+"""
+Модуль для взаимодействия с пользователем.
+Содержит абстрактный интерфейс IUserInterface и его реализацию ConsoleUserInterface для работы через консоль.
+"""
+
 from abc import ABC, abstractmethod
 from typing import Tuple
 
@@ -26,7 +31,11 @@ class ConsoleUserInterface(IUserInterface):
         Returns:
             Кортеж из трёх длин сторон
         """
+        # Запрашиваем у пользователя длину первой стороны и преобразуем в float
         side1 = float(input("Введите длину первой стороны: "))
+        # Запрашиваем длину второй стороны
         side2 = float(input("Введите длину второй стороны: "))
+        # Запрашиваем длину третьей стороны
         side3 = float(input("Введите длину третьей стороны: "))
+        # Возвращаем все три стороны в виде кортежа
         return side1, side2, side3

@@ -1,3 +1,9 @@
+"""
+Модуль контроллера бизнес-логики.
+Содержит класс TriangleController, который координирует работу всех компонентов системы:
+получение данных от пользователя, работу с БД, вычисления и отправку результатов.
+"""
+
 from src.triangle import Triangle
 from src.database import TriangleDatabase
 from src.user_interface import IUserInterface
@@ -34,34 +40,38 @@ class TriangleController:
         Returns:
             Результат обработки (тип треугольника)
         """
-        # 1. Получаем входные данные от пользователя
+        # Шаг 1: Получаем от пользователя длины трёх сторон треугольника
         side1, side2, side3 = self.user_interface.get_input()
         
-        # 2. Проверяем наличие записи в БД
+        # Шаг 2: Ищем в базе данных запись с такими сторонами
         db_result = self.database.get(side1, side2, side3)
         
+        # Проверяем, найдена ли запись в БД
         if db_result:
-            # Результат найден в БД
+            # Если запись найдена - извлекаем из неё данные
             triangle_type, error_message = db_result
+            # Если есть ошибка - возвращаем её, иначе - тип треугольника
             result = error_message if error_message else triangle_type
         else:
-            # Вычисляем результат
+            # Если записи нет - вычисляем тип треугольника
             triangle_type = self.triangle.classify(side1, side2, side3)
             
-            # Определяем, является ли результат ошибкой
+            # Проверяем, является ли результат ошибкой (невалидный треугольник)
             if triangle_type == "Not a triangle":
                 error_message = triangle_type
                 result = error_message
             else:
+                # Если треугольник валидный - ошибки нет
                 error_message = None
                 result = triangle_type
             
-            # Сохраняем в БД
+            # Сохраняем вычисленный результат в базу данных
             self.database.add(side1, side2, side3, triangle_type, error_message)
         
-        # 3. Отправляем результат стороннему сервису
+        # Шаг 3: Формируем строку с результатом для отправки
         data_to_send = f"Треугольник ({side1}, {side2}, {side3}): {result}"
+        # Отправляем результат стороннему сервису (имитация)
         self.external_service.send_data(data_to_send)
         
-        # 4. Возвращаем результат
+        # Шаг 4: Возвращаем результат обработки
         return result
